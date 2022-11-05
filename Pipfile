@@ -5,8 +5,13 @@ name = "pypi"
 
 [packages]
 graphene = "*"
+django = "*"
+graphene-django = "*"
+django-graphql-jwt = "*"
+django-cors-headers = "*"
 
 [dev-packages]
+autopep8 = "*"
 
 [requires]
 python_version = "3.10"
