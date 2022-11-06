@@ -13,3 +13,21 @@ class Query(graphene.ObjectType):
 
     def resolve_tracks(self, info, **kwargs):
         return Track.objects.all()
+
+
+class CreateTrack(graphene.Mutation):
+    track = graphene.Field(TrackType)
+
+    class Arguments:
+        title = graphene.String(required=True)
+        description = graphene.String(required=True)
+        url = graphene.String()
+
+    def mutate(self, info, title, description, url):
+        track = Track(title=title, description=description, url=url)
+        track.save()
+        return CreateTrack(track=track)
+
+
+class Mutation(graphene.ObjectType):
+    create_track = CreateTrack.Field()
