@@ -1,5 +1,6 @@
 import graphene
 from graphene_django import DjangoObjectType
+from graphql import GraphQLError
 from .models import Track, Like
 from users.schema import UserType
 
@@ -9,11 +10,20 @@ class TrackType(DjangoObjectType):
         model = Track
 
 
+class LikeType(DjangoObjectType):
+    class Meta:
+        model = Like
+
+
 class Query(graphene.ObjectType):
     tracks = graphene.List(TrackType)
+    likes = graphene.List(LikeType)
 
     def resolve_tracks(self, info, **kwargs):
         return Track.objects.all()
+
+    def resolve_likes(self, info, **kwargs):
+        return Like.objects.all()
 
 
 class CreateTrack(graphene.Mutation):
@@ -70,7 +80,7 @@ class DeleteTrack(graphene.Mutation):
         track = Track.objects.get(id=track_id)
 
         if user != track.posted_by:
-            raise Exception('Not permitted to delete track!')
+            raise GraphQLError('Not permitted to delete track!')
         track.delete()
         return DeleteTrack(track_id=track_id)
 
